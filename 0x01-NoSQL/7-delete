@@ -1,0 +1,6 @@
+// mongodb script: Deletes all matching documents in the collection 'school'
+
+db.school.remove(
+	{"name": "Holberton school"},
+	{multi: true}
+)
