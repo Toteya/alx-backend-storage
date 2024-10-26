@@ -17,11 +17,11 @@ def count_calls(fn: Callable) -> Callable:
     key = fn.__qualname__
 
     @wraps(fn)
-    def incr_calls(self, fn: Callable):
+    def incr_calls(self, data):
         if self.get(key) is None:
             self._redis.set(key, 0)
         self._redis.incr(key)
-        return fn
+        return fn(self, data)
 
     return incr_calls
 
