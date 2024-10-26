@@ -4,8 +4,26 @@ redis exercise
 """
 import redis
 import random
+from collections.abc import Callable
+from functools import wraps
 from typing import Union
 import uuid
+
+
+def count_calls(fn: Callable) -> Callable:
+    """Decorator: counts the number of times a methods of the Cache class
+    are called
+    """
+    key = fn.__qualname__
+
+    @wraps(fn)
+    def incr_calls(self, fn: Callable):
+        if self.get(key) is None:
+            self._redis.set(key, 0)
+        self._redis.incr(key)
+        return fn
+
+    return incr_calls
 
 
 class Cache:
@@ -18,6 +36,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Takes an argument and returns a string
@@ -26,7 +45,7 @@ class Cache:
         self._redis.set(key, data)
         return key
 
-    def get(self, key: str, fn=None):
+    def get(self, key: str, fn: Callable = None):
         """
         Returns data corresponding to the given key
         """
@@ -35,16 +54,15 @@ class Cache:
             return fn(data)
         else:
             return data
-    
+
     def get_str(self, data: bytes) -> str:
         """
         Parametrises Cache.get converts bytes to string
         """
         return data.decode('utf-8')
-    
+
     def get_int(self, data: bytes) -> int:
         """
         Parametrises Cache.get, convert bytes to int
         """
         return int.from_bytes(data, 'big')
-
