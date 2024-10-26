@@ -32,13 +32,19 @@ class Cache:
         """
         data = self._redis.get(key)
         if data and fn:
-            return fn(key)
+            return fn(data)
         else:
             return data
     
-    def get_str(self, ):
+    def get_str(self, data: bytes) -> str:
         """
-        Parametrises Cache.get
+        Parametrises Cache.get converts bytes to string
         """
-        
+        return data.decode('utf-8')
+    
+    def get_int(self, data: bytes) -> int:
+        """
+        Parametrises Cache.get, convert bytes to int
+        """
+        return int.from_bytes(data, 'big')
 
