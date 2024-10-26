@@ -17,13 +17,19 @@ def count_calls(fn: Callable) -> Callable:
     key = fn.__qualname__
 
     @wraps(fn)
-    def incr_calls(self, data):
+    def incr_calls(self, *args, **kwargs):
         if self.get(key) is None:
             self._redis.set(key, 0)
         self._redis.incr(key)
-        return fn(self, data)
+        return fn(self, *args, *kwargs)
 
     return incr_calls
+
+
+def call_history():
+    """ Decorator: Stores history of inputs and outputs for a particular
+    function.
+    """
 
 
 class Cache:
