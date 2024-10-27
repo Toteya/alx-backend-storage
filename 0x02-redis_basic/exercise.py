@@ -18,8 +18,6 @@ def count_calls(method: Callable) -> Callable:
 
     @wraps(method)
     def incr_calls(self, *args):
-        if self.get(key) is None:
-            self._redis.set(key, 0)
         self._redis.incr(key)
         return method(self, *args)
 
