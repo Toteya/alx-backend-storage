@@ -36,7 +36,7 @@ def call_history(method: Callable) -> Callable:
         """Appends arguments to list"""
         self._redis.rpush(input_list, str(args))
         output = method(self, *args)
-        self._redis.rpush(output_list, output)
+        self._redis.rpush(output_list, str(output))
 
     return add_to_input_list
 
