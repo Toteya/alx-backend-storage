@@ -26,7 +26,7 @@ def count_calls(method: Callable) -> Callable:
     return incr_calls
 
 
-def call_history(method: call):
+def call_history(method: Callable):
     """ Decorator: Stores history of inputs and outputs for a particular
     function.
     """
