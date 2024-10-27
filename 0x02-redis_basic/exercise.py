@@ -10,26 +10,27 @@ from typing import Union
 import uuid
 
 
-def count_calls(fn: Callable) -> Callable:
+def count_calls(method: Callable) -> Callable:
     """Decorator: counts the number of times a methods of the Cache class
     are called
     """
-    key = fn.__qualname__
+    key = method.__qualname__
 
-    @wraps(fn)
-    def incr_calls(self, *args, **kwargs):
+    @wraps(method)
+    def incr_calls(self, *args):
         if self.get(key) is None:
             self._redis.set(key, 0)
         self._redis.incr(key)
-        return fn(self, *args, *kwargs)
+        return method(self, *args)
 
     return incr_calls
 
 
-def call_history():
+def call_history(method: call):
     """ Decorator: Stores history of inputs and outputs for a particular
     function.
     """
+    pass
 
 
 class Cache:
