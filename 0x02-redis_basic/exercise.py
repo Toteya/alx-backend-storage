@@ -4,7 +4,7 @@ redis exercise
 """
 import redis
 import random
-from collections.abc import Callable
+from typing import Callable
 from functools import wraps
 from typing import Union
 import uuid
