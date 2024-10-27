@@ -24,11 +24,21 @@ def count_calls(method: Callable) -> Callable:
     return incr_calls
 
 
-def call_history(method: Callable):
+def call_history(method: Callable) -> Callable:
     """ Decorator: Stores history of inputs and outputs for a particular
     function.
     """
-    pass
+    input_list = method.__qualname__ + ":inputs"
+    output_list = method.__qualname__ + ":outputs"
+
+    @wraps(method)
+    def add_to_input_list(self, *args):
+        """Appends arguments to list"""
+        self._redis.rpush(input_list, str(args))
+        output = method(self, *args)
+        self._redis.rpush(output_list, output)
+
+    return add_to_input_list
 
 
 class Cache:
@@ -42,6 +52,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Takes an argument and returns a string
